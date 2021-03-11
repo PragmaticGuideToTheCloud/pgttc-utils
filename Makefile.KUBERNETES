@@ -1,0 +1,61 @@
+FLAVOR ?= $(shell uname -s | tr "[:upper:]" "[:lower:]")
+
+HELM_VERSION    ?= 3.5.3
+KUBECTL_VERSION ?= 1.17.0
+
+TARGETS = \
+$(GOPATH)/bin/helm \
+$(GOPATH)/bin/kubectl
+
+define helm_release_install
+.PHONY: $(GOPATH)/bin/$(1)
+
+$(GOPATH)/bin/$(1): $(GOPATH)/bin/$(1)-$(2)
+	rm -f $$@ && ln -s $$< $$@
+
+$(GOPATH)/bin/$(1)-$(2):
+	curl -fSL https://get.helm.sh/$(1)-v$(2)-$(FLAVOR)-amd64.tar.gz \
+	| tar -xz -f- --strip-components=1 -C /tmp/ $(FLAVOR)-amd64/$(1) \
+	&& mv -f /tmp/$(1) $$@ \
+	&& chmod +x $$@
+endef
+
+define kubernetes_release_install
+.PHONY: $(GOPATH)/bin/$(1)
+
+$(GOPATH)/bin/$(1): $(GOPATH)/bin/$(1)-$(2)
+	rm -f $$@ && ln -s $$< $$@
+
+$(GOPATH)/bin/$(1)-$(2):
+	curl -fSL https://storage.googleapis.com/kubernetes-release/release/v$(2)/bin/$(FLAVOR)/amd64/$(1) \
+	     -o $$@ \
+	&& chmod +x $$@
+endef
+
+export
+
+.PHONY: all \
+        check \
+        clean
+
+all: check $(TARGETS)
+
+check:
+	@if [[ -z "$$GOPATH" ]]; then \
+	    echo "ERROR: GOPATH variable is not set, please add"; \
+	    echo; \
+	    echo "export GOPATH=\$$HOME/go"; \
+            echo "export PATH=\$$GOPATH/bin:\$$PATH"; \
+            echo; \
+	    echo "to your profile and re-login."; \
+	    exit 1; \
+	fi >&2
+
+clean:
+	rm $(TARGETS)
+
+$(eval \
+	$(call helm_release_install,helm,$(HELM_VERSION)))
+
+$(eval \
+	$(call kubernetes_release_install,kubectl,$(KUBECTL_VERSION)))

@@ -1,0 +1,37 @@
+PIP3_REQUIREMENTS := \
+ansible \
+netaddr
+
+export
+
+.PHONY: all \
+        check \
+        install
+
+all: install
+
+check:
+	@( \
+	    if ! which gcc; then \
+	        echo "ERROR: gcc is required."; \
+	        exit 1; \
+	    fi; \
+	    if ! which pkg-config; then \
+	        echo "ERROR: pkg-config is required."; \
+	        exit 1; \
+	    fi; \
+	    if ! pkg-config --exists openssl; then \
+	        echo "ERROR: pkg-config: openssl is required."; \
+	        exit 1; \
+	    fi; \
+	    if ! pkg-config --exists libffi; then \
+	        echo "ERROR: pkg-config: libffi is required."; \
+	        exit 1; \
+	    fi; \
+	) >&2
+
+install: check
+	unset SOURCE_DATE_EPOCH \
+	&& pip3 install --upgrade --user pip \
+	&& python3 -m pip --no-cache-dir install --upgrade --user setuptools \
+	&& python3 -m pip --no-cache-dir install --upgrade --user $(PIP3_REQUIREMENTS)

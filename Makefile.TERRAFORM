@@ -1,0 +1,99 @@
+FLAVOR ?= $(shell uname -s | tr "[:upper:]" "[:lower:]")
+
+TERRAFORM_VERSION                     ?= 0.13.4
+TERRAFORM_PROVIDER_GOOGLE_VERSION     ?= 2.19.0
+TERRAFORM_PROVIDER_HELM_VERSION       ?= 0.10.4
+TERRAFORM_PROVIDER_KUBERNETES_VERSION ?= 1.9.0
+TERRAFORM_PROVIDER_LOCAL_VERSION      ?= 1.4.0
+TERRAFORM_PROVIDER_NULL_VERSION       ?= 2.1.2
+TERRAFORM_PROVIDER_RANDOM_VERSION     ?= 2.2.1
+TERRAFORM_PROVIDER_TEMPLATE_VERSION   ?= 2.1.2
+TERRAGRUNT_VERSION                    ?= 0.21.10
+
+TARGETS = \
+$(GOPATH)/bin/terraform \
+$(GOPATH)/bin/terraform-provider-google \
+$(GOPATH)/bin/terraform-provider-helm \
+$(GOPATH)/bin/terraform-provider-kubernetes \
+$(GOPATH)/bin/terraform-provider-local \
+$(GOPATH)/bin/terraform-provider-null \
+$(GOPATH)/bin/terraform-provider-random \
+$(GOPATH)/bin/terraform-provider-template \
+$(GOPATH)/bin/terragrunt
+
+define hashicorp_release_install
+.PHONY: $(GOPATH)/bin/$(1)
+
+$(GOPATH)/bin/$(1): $(GOPATH)/bin/$(1)-$(2)
+	rm -f $$@ && ln -s $$< $$@
+
+$(GOPATH)/bin/$(1)-$(2):
+	mkdir -p /tmp/$(1)-$(2)/ \
+	&& curl -fSL https://releases.hashicorp.com/$(1)/$(2)/$(1)_$(2)_$(FLAVOR)_amd64.zip \
+	        -o /tmp/$(1)-$(2)/download.zip \
+	&& unzip -o -d /tmp/$(1)-$(2)/ /tmp/$(1)-$(2)/download.zip \
+	&& mv /tmp/$(1)-$(2)/$(1)* $$@ \
+	&& rm -rf /tmp/$(1)-$(2)/ \
+	&& chmod +x $$@
+endef
+
+define terragrunt_release_install
+.PHONY: $(GOPATH)/bin/$(1)
+
+$(GOPATH)/bin/$(1): $(GOPATH)/bin/$(1)-$(2)
+	rm -f $$@ && ln -s $$< $$@
+
+$(GOPATH)/bin/$(1)-$(2):
+	curl -fSL https://github.com/gruntwork-io/$(1)/releases/download/v$(2)/$(1)_$(FLAVOR)_amd64 \
+	     -o $$@ \
+	&& chmod +x $$@
+endef
+
+export
+
+.PHONY: all \
+        check \
+        clean
+
+all: check $(TARGETS)
+
+check:
+	@if [[ -z "$$GOPATH" ]]; then \
+	    echo "ERROR: GOPATH variable is not set, please add"; \
+	    echo; \
+	    echo "export GOPATH=\$$HOME/go"; \
+            echo "export PATH=\$$GOPATH/bin:\$$PATH"; \
+            echo; \
+	    echo "to your profile and re-login."; \
+	    exit 1; \
+	fi >&2
+
+clean:
+	rm $(TARGETS)
+
+$(eval \
+	$(call hashicorp_release_install,terraform,$(TERRAFORM_VERSION)))
+
+$(eval \
+	$(call hashicorp_release_install,terraform-provider-google,$(TERRAFORM_PROVIDER_GOOGLE_VERSION)))
+
+$(eval \
+	$(call hashicorp_release_install,terraform-provider-helm,$(TERRAFORM_PROVIDER_HELM_VERSION)))
+
+$(eval \
+	$(call hashicorp_release_install,terraform-provider-kubernetes,$(TERRAFORM_PROVIDER_KUBERNETES_VERSION)))
+
+$(eval \
+	$(call hashicorp_release_install,terraform-provider-local,$(TERRAFORM_PROVIDER_LOCAL_VERSION)))
+
+$(eval \
+	$(call hashicorp_release_install,terraform-provider-null,$(TERRAFORM_PROVIDER_NULL_VERSION)))
+
+$(eval \
+	$(call hashicorp_release_install,terraform-provider-random,$(TERRAFORM_PROVIDER_RANDOM_VERSION)))
+
+$(eval \
+	$(call hashicorp_release_install,terraform-provider-template,$(TERRAFORM_PROVIDER_TEMPLATE_VERSION)))
+
+$(eval \
+	$(call terragrunt_release_install,terragrunt,$(TERRAGRUNT_VERSION)))
