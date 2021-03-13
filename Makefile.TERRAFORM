@@ -1,6 +1,6 @@
 FLAVOR ?= $(shell uname -s | tr "[:upper:]" "[:lower:]")
 
-TERRAFORM_VERSION                     ?= 0.13.4
+TERRAFORM_VERSION                     ?= 0.14.8
 TERRAFORM_PROVIDER_GOOGLE_VERSION     ?= 2.19.0
 TERRAFORM_PROVIDER_HELM_VERSION       ?= 0.10.4
 TERRAFORM_PROVIDER_KUBERNETES_VERSION ?= 1.9.0
