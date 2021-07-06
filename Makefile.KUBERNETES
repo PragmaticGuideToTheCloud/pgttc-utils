@@ -1,6 +1,6 @@
 FLAVOR ?= $(shell uname -s | tr "[:upper:]" "[:lower:]")
 
-HELM_VERSION    ?= 3.5.3
+HELM_VERSION    ?= 3.6.2
 KUBECTL_VERSION ?= 1.20.4
 
 TARGETS = \
