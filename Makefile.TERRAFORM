@@ -1,24 +1,10 @@
 FLAVOR ?= $(shell uname -s | tr "[:upper:]" "[:lower:]")
 
 TERRAFORM_VERSION                     ?= 1.0.1
-TERRAFORM_PROVIDER_GOOGLE_VERSION     ?= 2.19.0
-TERRAFORM_PROVIDER_HELM_VERSION       ?= 0.10.4
-TERRAFORM_PROVIDER_KUBERNETES_VERSION ?= 1.9.0
-TERRAFORM_PROVIDER_LOCAL_VERSION      ?= 1.4.0
-TERRAFORM_PROVIDER_NULL_VERSION       ?= 2.1.2
-TERRAFORM_PROVIDER_RANDOM_VERSION     ?= 2.2.1
-TERRAFORM_PROVIDER_TEMPLATE_VERSION   ?= 2.1.2
 TERRAGRUNT_VERSION                    ?= 0.28.11
 
 TARGETS = \
 $(GOPATH)/bin/terraform \
-$(GOPATH)/bin/terraform-provider-google \
-$(GOPATH)/bin/terraform-provider-helm \
-$(GOPATH)/bin/terraform-provider-kubernetes \
-$(GOPATH)/bin/terraform-provider-local \
-$(GOPATH)/bin/terraform-provider-null \
-$(GOPATH)/bin/terraform-provider-random \
-$(GOPATH)/bin/terraform-provider-template \
 $(GOPATH)/bin/terragrunt
 
 define hashicorp_release_install
