@@ -1,6 +1,6 @@
 FLAVOR ?= $(shell uname -s | tr "[:upper:]" "[:lower:]")
 
-GOOGLE_CLOUD_SDK_VERSION ?= 347.0.0
+GOOGLE_CLOUD_SDK_VERSION ?= 367.0.0
 
 export
 
