@@ -1,7 +1,7 @@
 FLAVOR ?= $(shell uname -s | tr "[:upper:]" "[:lower:]")
 
 HELM_VERSION    ?= 3.7.2
-KUBECTL_VERSION ?= 1.21.8
+KUBECTL_VERSION ?= 1.24.0
 
 TARGETS = \
 $(GOPATH)/bin/helm \

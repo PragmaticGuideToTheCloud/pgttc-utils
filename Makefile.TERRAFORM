@@ -1,6 +1,6 @@
 FLAVOR ?= $(shell uname -s | tr "[:upper:]" "[:lower:]")
 
-TERRAFORM_VERSION                     ?= 1.1.7
+TERRAFORM_VERSION                     ?= 1.1.9
 TERRAGRUNT_VERSION                    ?= 0.36.1
 
 TARGETS = \
